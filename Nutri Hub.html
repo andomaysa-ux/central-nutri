@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nutri Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0A0B1E;--bg2:#15173A;--card:#171A3B;--ink:#EEF0FF;--dim:#9AA1D0;--line:#2A2E5E;--ac:#8C9BFF;--ac2:#5EE0C8;--on:#0A0B1E;--bad:#FF7A8A;--sh:0 18px 40px -14px rgba(0,0,0,.6);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#F2F3FC;--bg2:#E4E7FA;--card:#fff;--ink:#14163A;--dim:#5C6190;--line:#D3D7F0;--ac:#4C5BDB;--ac2:#0E8F7C;--on:#fff;--bad:#C0283C;--sh:0 18px 34px -16px rgba(40,50,120,.35)}}
+:root[data-theme="light"]{--bg:#F2F3FC;--bg2:#E4E7FA;--card:#fff;--ink:#14163A;--dim:#5C6190;--line:#D3D7F0;--ac:#4C5BDB;--ac2:#0E8F7C;--on:#fff;--bad:#C0283C;--sh:0 18px 34px -16px rgba(40,50,120,.35)}
+*{box-sizing:border-box}html,body{margin:0}
+body{font:15px/1.5 Sora,system-ui,sans-serif;color:var(--ink);background:radial-gradient(900px 500px at 85% -10%,var(--bg2),transparent 70%),var(--bg);min-height:100vh}
+.w{max-width:1040px;margin:0 auto;padding:18px 16px 60px}
+header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.orb{width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 30% 30%,var(--ac2),var(--ac));box-shadow:0 14px 18px -8px var(--ac);animation:fl 5s ease-in-out infinite}
+@keyframes fl{50%{transform:translateY(-6px)}}
+@media(prefers-reduced-motion:reduce){.orb{animation:none}}
+h1{font-size:20px;margin:0;flex:1}h2{font-size:16px;margin:0 0 10px}
+nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+button,.btn{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:99px;text-decoration:none;display:inline-block}
+button:hover,.btn:hover{border-color:var(--ac)}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid var(--ac2);outline-offset:2px}
+.on,.pri{background:var(--ac);color:var(--on);border-color:var(--ac);font-weight:600}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:16px;box-shadow:var(--sh)}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+label{display:block;font-size:12px;color:var(--dim);margin-bottom:3px}
+input,select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+textarea{min-height:340px;line-height:1.55}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.chips button{padding:6px 12px;font-size:13px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.st{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}
+.st div{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:10px}.st b{font-size:24px;display:block}.st span{font-size:12px;color:var(--dim)}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:6px;border-bottom:1px solid var(--line)}th{color:var(--dim);font-weight:500}
+.sc{overflow-x:auto}.hid{display:none!important}.mut{color:var(--dim);font-size:13px}
+#gate{position:fixed;inset:0;z-index:9;background:var(--bg);display:grid;place-items:center;padding:20px}
+#gate .card{max-width:340px;width:100%;text-align:center}
+.pr{display:none}
+@media print{body{background:#fff;color:#000}:root{--card:#fff;--ink:#000;--dim:#444;--line:#bbb;--bg:#fff;--ac:#334;--ac2:#087}.np,header,nav{display:none!important}.pr{display:block}.card{box-shadow:none;break-inside:avoid}}
+</style>
+</head>
+<body>
+<div id="gate"><div class="card"><div class="orb" style="margin:0 auto 12px"></div><h2 id="gt">Acesso restrito a nutricionistas</h2><input id="pin" type="password" autocomplete="off" placeholder="PIN" aria-label="PIN"><div class="row" style="justify-content:center"><button class="pri" id="go">Entrar</button></div><p class="mut" id="gm"></p></div></div>
+
+<div class="w" id="app">
+<header class="np"><div class="orb"></div><h1>Nutri Hub</h1><button id="th">Tema</button><button id="lk">Bloquear</button></header>
+<nav class="np" id="nav"><button data-t="ev" class="on">Evoluções</button><button data-t="jj">Jejum abreviado</button><button data-t="rp">Relatórios</button><button data-t="oms">Curvas OMS</button></nav>
+
+<section id="ev">
+<div class="card">
+<h2>Categoria</h2><div class="chips" id="cats"></div>
+<div class="g">
+<div><label>Tipo</label><select id="tipo"><option value="adm">Visita de admissão</option><option value="rev">Revisita</option></select></div>
+<div><label>Paciente</label><select id="sexo"><option value="M">Masculino</option><option value="F">Feminino</option></select></div>
+<div><label>Acompanhante</label><select id="ac"><option>sem acompanhante</option><option>com acompanhante</option></select></div>
+<div><label>Triagem</label><select id="tri"><option>NRS-2002</option><option>MNA</option><option>STRONG Kids (STK)</option></select></div>
+<div><label>Estado nutricional</label><input id="en" placeholder="Eutrofia" list="enl"><datalist id="enl"><option>Eutrofia<option>Sobrepeso<option>Obesidade grau I<option>Obesidade grau II<option>Obesidade grau III<option>Baixo peso<option>Risco nutricional</datalist></div>
+<div><label>Nível de assistência</label><select id="nv"><option>Primário</option><option>Secundário</option><option>Terciário</option></select></div>
+<div><label>Dieta (aparece só na conduta)</label><input id="di"></div>
+<div><label>Apetite</label><select id="ap"><option>preservado</option><option>reduzido</option><option>aumentado</option></select></div>
+<div><label>Aceitação alimentar</label><input id="ace" placeholder="100%"></div>
+<div><label>Sintomas GI</label><input id="si" value="Nega sintomas gastrointestinais"></div>
+<div><label>Hábito intestinal</label><input id="ha" value="regular"></div>
+<div><label>Última evacuação</label><input id="evc" type="date"></div>
+<div><label>Hidratação</label><input id="hi" placeholder="2L/dia"></div>
+<div id="jwrap"><label>Em jejum desde</label><input id="jd" type="datetime-local"></div>
+</div>
+<p class="mut" id="dt"></p>
+</div>
+<div class="card">
+<h2>Evolução (editável)</h2><textarea id="out"></textarea>
+<div class="row"><button class="pri" id="cp">Copiar evolução</button><span class="mut" id="cm"></span></div>
+<h2 style="margin-top:16px">Banco de frases</h2><div class="chips" id="bf"></div>
+</div>
+</section>
+
+<section id="jj" class="hid">
+<div class="card np"><h2>Novo registro de abreviação</h2>
+<div class="g">
+<div><label>Data da abreviação</label><input id="a_d" type="date"></div>
+<div><label>Paciente (somente iniciais)</label><input id="a_i" placeholder="A.O.S"></div>
+<div><label>Data de nascimento</label><input id="a_n" type="date"></div>
+<div><label>Elegível?</label><select id="a_e"><option>SIM</option><option>NÃO</option></select></div>
+<div><label>Motivo (se não elegível)</label><input id="a_m"></div>
+<div><label>Horário da abreviação</label><input id="a_h" type="time"></div>
+<div><label>Horário da cirurgia/exame</label><input id="a_c" type="time"></div>
+<div><label>Especialidade</label><input id="a_s"></div>
+<div><label>Procedimento</label><input id="a_p"></div>
+<div><label>Ingestão do suplemento</label><select id="a_g"><option>Total</option><option>Parcial</option><option>Recusou</option></select></div>
+</div>
+<div class="row"><button class="pri" id="a_sv">Salvar e copiar evolução</button><label class="btn" style="margin:0">Importar planilha (.csv)<input id="a_f" type="file" accept=".csv" class="hid"></label><span class="mut" id="a_ms"></span></div>
+<p class="mut">Nome completo não é aceito: digite apenas iniciais.</p></div>
+<div class="card"><h2>Registros recentes</h2><div class="sc"><table><thead><tr><th>Data</th><th>Iniciais</th><th>Procedimento</th><th>Janela</th><th>Ingestão</th><th class="np"></th></tr></thead><tbody id="a_t"></tbody></table></div></div>
+</section>
+
+<section id="rp" class="hid">
+<div class="pr"><h1>Assistência Nutricional – Relatório de cirurgias e abreviação de jejum</h1><p id="pp"></p></div>
+<div class="card np"><h2>Cirurgias do dia</h2>
+<div class="g"><div><label>Data</label><input id="d_d" type="date"></div><div><label>Eletivas</label><input id="d_e" type="number" min="0" value="0"></div><div><label>Urgência</label><input id="d_u" type="number" min="0" value="0"></div><div><label>Emergência</label><input id="d_m" type="number" min="0" value="0"></div></div>
+<div class="row"><button class="pri" id="d_sv">Salvar dia</button><span class="mut" id="d_ms"></span></div></div>
+<div class="card"><div class="row np" style="margin:0 0 12px"><button id="p_w" class="on">Semanal</button><button id="p_m">Mensal</button><button id="pdf" class="pri">Gerar PDF</button><button id="bk">Baixar backup</button><label class="btn" style="margin:0">Restaurar<input id="bkf" type="file" accept=".json" class="hid"></label></div>
+<div class="st" id="stt"></div>
+<h2>Abreviações de jejum x elegíveis</h2><div id="c1"></div>
+<h2 style="margin-top:14px">Cirurgias por tipo</h2><div id="c2"></div>
+<div class="sc" style="margin-top:14px"><table><thead><tr><th>Período</th><th>Elegíveis</th><th>Abreviados</th><th>Adesão</th><th>Eletivas</th><th>Urgência</th><th>Emergência</th></tr></thead><tbody id="rt"></tbody></table></div></div>
+</section>
+
+<section id="oms" class="hid"><div class="card"><h2>Classificação nutricional de crianças e adolescentes (curvas da OMS)</h2><p class="mut">O Curve Mate abre em outra aba. Depois, copie o diagnóstico para a categoria "Criança/adolescente" em Evoluções.</p><a class="btn pri" href="https://curve-mate.lovable.app" target="_blank" rel="noopener">Abrir Curve Mate</a></div></section>
+</div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const ld=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}};
+const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pad=n=>String(n).padStart(2,'0'),iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const br=s=>{if(!s)return '';const[a,b,c]=s.split('-');return c+'/'+b+'/'+a.slice(2)};
+const brf=s=>{if(!s)return '';const[a,b,c]=s.split('-');return c+'/'+b+'/'+a};
+const cp=async t=>{try{await navigator.clipboard.writeText(t)}catch{const x=document.createElement('textarea');x.value=t;document.body.append(x);x.select();document.execCommand('copy');x.remove()}};
+// ---- Acesso (barreira local; não substitui login do servidor) ----
+let open_=false;
+const hs=async s=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode('nh'+s)))].map(x=>x.toString(16).padStart(2,'0')).join('');
+function gate(){const p=ld('nh_pin',null);$('#gt').textContent=p?'Acesso restrito a nutricionistas':'Crie um PIN (mín. 4 dígitos)';$('#gate').classList.remove('hid');$('#app').classList.add('hid');$('#pin').value=''}
+$('#go').onclick=async()=>{const v=$('#pin').value,p=ld('nh_pin',null);if(!p){if(v.length<4){$('#gm').textContent='Use ao menos 4 caracteres.';return}sv('nh_pin',await hs(v))}else if(p!==await hs(v)){$('#gm').textContent='PIN incorreto.';return}$('#gm').textContent='';$('#gate').classList.add('hid');$('#app').classList.remove('hid')};
+$('#pin').onkeydown=e=>{if(e.key==='Enter')$('#go').click()};
+$('#lk').onclick=gate;
+$('#th').onclick=()=>{const r=document.documentElement,d=r.dataset.theme==='light'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme:light)').matches);r.dataset.theme=d?'dark':'light'};
+$$('#nav button').forEach(b=>b.onclick=()=>{$$('#nav button').forEach(x=>x.classList.toggle('on',x===b));['ev','jj','rp','oms'].forEach(i=>$('#'+i).classList.toggle('hid',i!==b.dataset.t));if(b.dataset.t==='rp')rep()});
+// ---- Evoluções ----
+const T=['Adequo o planejamento alimentar considerando preferências, bloqueios alimentares e tolerância à dieta;','Monitoro aceitação alimentar, sintomas gastrointestinais, hábito intestinal e hidratação;'];
+const OR='Realizo orientações nutricionais individualizadas conforme quadro clínico e necessidades identificadas;',SU='Realizo orientações quanto à suplementação nutricional oral, quando indicada;';
+const C={
+adm:{n:'Admissão geral',d:'geral',c:['Mantenho dieta {d} prescrita conforme evolução clínica e aceitação alimentar;',T[0],OR,T[1],SU]},
+jej:{n:'Jejum p/ procedimento',d:'',j:1,hi:'jejum de água para procedimento',ac:'expectativa de 100%',c:['Aguardo liberação da dieta prescrita pelo médico; registro informações nutricionais previamente na gestão de nutrição para personalização da dieta; individualizo conforme evolução clínica e aceitação alimentar;',T[0],OR,T[1],SU]},
+pos:{n:'Pós-jejum, dieta liberada',d:'',j:1,c:['Mantenho dieta {d} após término do jejum; registro informações nutricionais previamente na gestão de nutrição para personalização da dieta; individualizo conforme evolução clínica e aceitação alimentar;',T[0],OR,T[1],SU]},
+col:{n:'Colecistectomia',d:'leve hipogordurosa',si:'Nega sintomas gastrointestinais',c:['Prescrevo e oriento dieta {d} fracionada para prevenção de diarreia, esteatorreia e desconforto digestivo;','Oriento a exclusão temporária de frituras, embutidos e gorduras saturadas, promovendo a reintrodução gradual e qualitativa dos lipídeos;','Estimulo a ingestão de fibras solúveis para auxílio na ligação dos sais biliares e regulação da consistência fecal;','Monitoro episódios de náuseas, diarreia pós-prandial, hábito intestinal e aceitação do volume oferecido;',T[0]]},
+rim:{n:'Litíase / cálculo renal',d:'geral para litíase renal (normocálcica e com restrição moderada de sódio)',hi:'incentivo à ingesta hídrica oral frequente',c:['Adequo a conduta dietoterápica mantendo o aporte de cálcio adequado à população geral (1000-1200mg/dia) via fontes alimentares nas refeições principais, visando a quelação entérica do oxalato e prevenção da hiperoxalúria secundária;','Oriento adequação do aporte hídrico (meta > 2,5L a 3L/dia) e restrição ao consumo excessivo de sódio e proteínas de origem animal para controle da calciúria e uricosúria;','Reforço o incentivo ao consumo de citrato via dieta (frutas cítricas) para inibição da cristalização e agregação urinária;','Monitoro estado de hidratação, volume urinário, tolerância às metas hídricas, sintomas gastrointestinais e hábito intestinal;']},
+end:{n:'Cirurgia intestinal / endometriose',d:'branda de fácil digestão / pobre em FODMAPs',ap:'reduzido',si:'Refere leve distensão e desconforto abdominal pós-prandial',ha:'fezes amolecidas (Bristol 5/6)',c:['Oriento dieta {d} e fracionamento aumentado para prevenção de dor abdominal e meteorismo;','Monitoro frequência, consistência das evacuações (escala de Bristol) e tolerância gastrointestinal frente ao trânsito intestinal alterado pós-ressecção;','Individualizo a progressão da consistência e a reintrodução gradativa de fibras conforme consolidação do hábito intestinal e aceitação;','Acompanho adequação da ingestão energético-proteica no pós-operatório e aceitação do suplemento oral;',T[0]]},
+div:{n:'Diverticulite',d:'',c:['Mantenho dieta {d} conforme evolução clínica e tolerância gastrointestinal;','Monitoro dor abdominal, distensão, náuseas, vômitos, hábito intestinal e aceitação alimentar;','Adequo consistência e composição da dieta conforme tolerância e evolução clínica;',T[0]]},
+cef:{n:'Cefaleia',d:'',c:['Mantenho dieta {d} conforme evolução clínica e aceitação alimentar;','Retiro temporariamente alimentos estimulantes conforme gatilho relatado para cefaleia;','Reforço adequada hidratação, conforme condição clínica;','Acompanho regularidade das refeições e aceitação alimentar;']},
+sep:{n:'Cirurgia septonasal',d:'pastosa fria',c:['Mantenho dieta {d} conforme prescrição, evolução clínica e tolerância alimentar;',T[0],T[1]]},
+tir:{n:'Tireoidectomia',d:'pastosa',c:['Mantenho dieta {d} conforme prescrição, evolução clínica e tolerância alimentar;','Monitoro aceitação alimentar e tolerância à consistência prescrita;',T[0],T[1]]},
+dia:{n:'Diarreia',d:'',si:'Refere diarreia',c:['Mantenho/ajusto dieta {d} conforme tolerância e evolução dos sintomas gastrointestinais;','Monitoro frequência e consistência das evacuações, aceitação alimentar e hidratação;','Reforço adequada hidratação conforme condição clínica e perdas gastrointestinais;','Adequo o planejamento alimentar conforme tolerância individual;']},
+con:{n:'Constipação',d:'geral',si:'Refere constipação',ha:'irregular',c:['Mantenho dieta {d} prescrita conforme tolerância e evolução do hábito intestinal;','Reforço adequada ingestão hídrica, conforme condição clínica;','Adequo o planejamento alimentar conforme tolerância e necessidades identificadas;','Monitoro frequência e consistência das evacuações, aceitação alimentar e hidratação;']},
+hem:{n:'Hemorroidas',d:'',c:['Mantenho dieta {d} conforme evolução clínica e tolerância alimentar;','Reforço adequada hidratação conforme condição clínica;','Oriento estratégias nutricionais para favorecer regularidade intestinal e evitar esforço evacuatório;','Monitoro hábito intestinal, consistência das evacuações, aceitação alimentar e hidratação;']},
+cri:{n:'Criança/adolescente',d:'geral',tri:'STRONG Kids (STK)',c:['Mantenho dieta {d} prescrita;','Ajusto planejamento alimentar conforme preferências e bloqueios;','Monitoro aceitação alimentar, sintomas gastrointestinais, hábito intestinal e hidratação;','Acompanho crescimento e estado nutricional segundo curvas da OMS;']}
+};
+const BF=['Optou-se por não restringir o sódio para preservar a palatabilidade e garantir o aporte calórico, prevenindo a hiporexia por alterações gustativas senis. Conduta flexível conforme evolução clínica e aceitação.','Entrego orientação e explicação ao acompanhante;','Aguardo avaliação médica para liberação de dieta.'];
+let cat='adm';
+const gv=i=>$('#'+i).value.trim();
+const NV={Primário:7,Secundário:4,Terciário:3};
+function addD(n){const d=new Date();d.setDate(d.getDate()+n);return iso(d)}
+function build(){
+ const c=C[cat],f=$('#sexo').value==='F',a=f?'a':'o',n=gv('nv'),tri=gv('tri');
+ const prox=br(addD(NV[n])),rea=br(addD(7));
+ $('#dt').textContent='Próxima visita: '+prox+' · Reavaliação da triagem: '+rea;
+ const L=[`Em ${gv('tipo')==='rev'?'revisita':'visita de admissão'}, paciente encontrad${a} consciente, colaborativ${a}, ${gv('ac')}.`,
+ `Avaliação nutricional: Triagem pelo ${tri} (reavaliação em ${rea}). Estado nutricional${cat==='cri'?' segundo curvas da OMS':''}: ${gv('en')}. Nível de assistência: ${n}. Próxima visita: ${prox}.`,
+ `Nega alergias, intolerâncias e sensibilidades alimentares. Apetite ${gv('ap')}. Preferências e bloqueios alimentares registrados.`,
+ `Aceitação alimentar: ${gv('ace')}.`,
+ `Sintomas gastrointestinais: ${gv('si')}. Hábito intestinal: ${gv('ha')}. Última evacuação: ${br(gv('evc'))}.`,
+ `Hidratação: ${gv('hi')}.`];
+ if(c.j&&gv('jd')){const[d,h]=gv('jd').split('T');L.push(`${cat==='pos'?'Estava':'Está'} em jejum desde às ${h} do dia ${br(d)}.`)}
+ const di=gv('di');
+ L.push('','Conduta nutricional:',...c.c.map(x=>'- '+x.replace('{d}',di)),'- Reavaliação nutricional conforme nível de assistência.','Acolho críticas e elogios.');
+ $('#out').value=L.join('\n');
+}
+function setCat(k){cat=k;const c=C[k];$$('#cats button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));$('#di').value=c.d||'';$('#ap').value=c.ap||'preservado';$('#si').value=c.si||'Nega sintomas gastrointestinais';$('#ha').value=c.ha||'regular';$('#hi').value=c.hi||'';$('#ace').value=c.ac||'';if(c.tri)$('#tri').value=c.tri;$('#jwrap').classList.toggle('hid',!c.j);build()}
+$('#cats').innerHTML=Object.entries(C).map(([k,v])=>`<button data-k="${k}">${v.n}</button>`).join('');
+$('#cats').onclick=e=>{if(e.target.dataset.k)setCat(e.target.dataset.k)};
+$('#bf').innerHTML=BF.map((t,i)=>`<button data-i="${i}">${esc(t.slice(0,48))}…</button>`).join('');
+$('#bf').onclick=e=>{const i=e.target.dataset.i;if(i!=null){const o=$('#out');o.value=o.value.replace(/\nAcolho críticas e elogios\.$/,'\n- '+BF[i]+'\nAcolho críticas e elogios.')}};
+$$('#ev input,#ev select').forEach(x=>x.addEventListener('input',build));
+$('#cp').onclick=async()=>{await cp($('#out').value);$('#cm').textContent='Copiado.';setTimeout(()=>$('#cm').textContent='',2000)};
+// ---- Jejum abreviado ----
+let J=ld('nh_j',[]),D=ld('nh_d',[]);
+const mins=(a,b)=>{if(!a||!b)return null;const[h1,m1]=a.split(':'),[h2,m2]=b.split(':');return(((+h2*60+ +m2)-(+h1*60+ +m1))%1440+1440)%1440};
+const dur=m=>m==null?'':Math.floor(m/60)+' h'+(m%60?' '+m%60+' min':'');
+function nota(r){
+ if(r.e==='NÃO')return `Aplicado checklist de elegibilidade para abreviação de jejum pré-operatório; paciente não elegível${r.m?': '+r.m:''}. Protocolo de abreviação não iniciado.`;
+ const w=mins(r.h,r.c);
+ return `Aplicado checklist de elegibilidade para abreviação de jejum pré-operatório; paciente cooperativo, nega náuseas, emese ou dor aguda no momento, apresentando abdome flácido e RHA presentes. Critérios de exclusão ausentes, iniciado protocolo com Fresubin Jucy DRINK sabor maçã${r.h?' às '+r.h:''}. Janela de segurança: jejum abreviado em ${w!=null?dur(w)+' antes do procedimento'+(r.c?' ('+r.c+')':''):'—'}. Ingestão do suplemento: ${(r.g||'').toLowerCase()}.`;
+}
+function iniOk(s){const l=s.replace(/[^A-Za-zÀ-ú]/g,'');return l.length>=1&&l.length<=6&&(s.includes('.')||l.length<=4)}
+function jt(){const R=[...J].sort((a,b)=>b.d.localeCompare(a.d)).slice(0,40);$('#a_t').innerHTML=R.length?R.map(r=>`<tr><td>${brf(r.d)}</td><td>${esc(r.i)}</td><td>${esc(r.s)} ${esc(r.p)}</td><td>${r.e==='NÃO'?'não elegível':dur(mins(r.h,r.c))}</td><td>${esc(r.e==='NÃO'?'—':r.g)}</td><td class="np"><button data-c="${r.id}">Copiar</button> <button data-x="${r.id}" aria-label="Excluir">×</button></td></tr>`).join(''):'<tr><td colspan="6" class="mut">Nenhum registro ainda. Preencha o formulário acima ou importe a planilha.</td></tr>'}
+$('#a_t').onclick=e=>{const c=e.target.dataset.c,x=e.target.dataset.x;if(c){cp(nota(J.find(r=>r.id==c)))}if(x){J=J.filter(r=>r.id!=x);sv('nh_j',J);jt()}};
+$('#a_sv').onclick=()=>{const ini=gv('a_i').toUpperCase(),m=$('#a_ms');
+ if(!gv('a_d')){m.textContent='Informe a data.';return}
+ if(!iniOk(ini)){m.textContent='Digite só as iniciais (ex.: A.O.S), nunca o nome completo.';return}
+ const r={id:Date.now(),d:gv('a_d'),i:ini,n:gv('a_n'),e:gv('a_e'),m:gv('a_m'),h:gv('a_h'),c:gv('a_c'),s:gv('a_s'),p:gv('a_p'),g:gv('a_g')};
+ J.push(r);sv('nh_j',J);cp(nota(r));jt();m.textContent='Salvo. Evolução copiada.';['a_i','a_n','a_m','a_h','a_c','a_s','a_p'].forEach(i=>$('#'+i).value='')};
+$('#a_f').onchange=async e=>{const f=e.target.files[0];if(!f)return;const t=new TextDecoder('windows-1252').decode(await f.arrayBuffer());let k=0;
+ t.split(/\r?\n/).forEach(l=>{const c=l.split(';');const m=(c[0]||'').match(/^(\d\d)\/(\d\d)\/(\d{4})$/);if(!m)return;const ini=(c[1]||'').trim().toUpperCase();if(!ini||!iniOk(ini))return;
+ const nb=(c[4]||'').match(/^(\d\d)\/(\d\d)\/(\d{4})$/);
+ J.push({id:Date.now()+k++,d:`${m[3]}-${m[2]}-${m[1]}`,i:ini,n:nb?`${nb[3]}-${nb[2]}-${nb[1]}`:'',e:(c[5]||'').trim().toUpperCase()==='NÃO'?'NÃO':'SIM',m:(c[6]||'').trim(),h:(c[7]||'').trim(),c:(c[9]||'').trim(),s:(c[10]||'').trim(),p:(c[11]||'').trim(),g:'Total'})});
+ sv('nh_j',J);jt();$('#a_ms').textContent=k+' registros importados (ingestão marcada como Total; ajuste se precisar).'};
+// ---- Relatórios ----
+let per='w';
+const mon=s=>{const d=new Date(s+'T12:00');d.setDate(d.getDate()-((d.getDay()+6)%7));return iso(d)};
+const key=s=>per==='w'?mon(s):s.slice(0,7);
+const lab=k=>per==='w'?br(k).slice(0,5):k.slice(5)+'/'+k.slice(2,4);
+$('#d_d').value=iso(new Date());$('#a_d').value=iso(new Date());
+$('#d_sv').onclick=()=>{const d=gv('d_d');if(!d)return;const r={d,e:+gv('d_e')||0,u:+gv('d_u')||0,m:+gv('d_m')||0};D=D.filter(x=>x.d!==d);D.push(r);sv('nh_d',D);$('#d_ms').textContent='Dia salvo.';rep()};
+function bars(R,S){const W=640,H=210,b=30,m=(Math.max(1,...R.flatMap(r=>S.map(s=>r[s.k])))),gw=(W-40)/Math.max(R.length,1),bw=Math.min(22,(gw-8)/S.length);
+ let o=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Gráfico de barras"><line x1="30" x2="${W}" y1="${H-b}" y2="${H-b}" stroke="var(--line)"/>`;
+ R.forEach((r,i)=>{const x0=34+i*gw+(gw-bw*S.length)/2;S.forEach((s,j)=>{const h=(H-b-24)*r[s.k]/m,x=x0+j*bw;o+=`<rect x="${x}" y="${H-b-h}" width="${bw-2}" height="${h}" rx="4" fill="${s.c}"/><text x="${x+bw/2-1}" y="${H-b-h-4}" font-size="10" text-anchor="middle" fill="var(--dim)">${r[s.k]}</text>`});o+=`<text x="${34+i*gw+gw/2}" y="${H-12}" font-size="11" text-anchor="middle" fill="var(--dim)">${r.l}</text>`});
+ return o+'</svg><div class="mut">'+S.map(s=>`<span style="color:${s.c}">■</span> ${s.n}`).join(' &nbsp; ')+'</div>'}
+function rep(){
+ const B={};const g=k=>B[k]??(B[k]={el:0,ab:0,e:0,u:0,m:0});
+ J.forEach(r=>{const b=g(key(r.d));if(r.e==='SIM'){b.el++;if(r.g!=='Recusou')b.ab++}});
+ D.forEach(r=>{const b=g(key(r.d));b.e+=r.e;b.u+=r.u;b.m+=r.m});
+ const ks=Object.keys(B).sort().slice(per==='w'?-8:-12),R=ks.map(k=>({l:lab(k),...B[k]}));
+ const t=R.reduce((a,r)=>{for(const x of['el','ab','e','u','m'])a[x]+=r[x];return a},{el:0,ab:0,e:0,u:0,m:0}),tx=t.el?Math.round(100*t.ab/t.el):0;
+ $('#stt').innerHTML=[[tx+'%','Adesão ao protocolo'],[t.ab,'Jejuns abreviados'],[t.el,'Elegíveis'],[t.e+t.u+t.m,'Cirurgias registradas']].map(([a,b])=>`<div><b>${a}</b><span>${b}</span></div>`).join('');
+ $('#c1').innerHTML=R.length?bars(R,[{k:'el',n:'Elegíveis',c:'var(--ac)'},{k:'ab',n:'Abreviados',c:'var(--ac2)'}]):'<p class="mut">Sem dados no período. Registre abreviações na aba Jejum abreviado.</p>';
+ $('#c2').innerHTML=R.length?bars(R,[{k:'e',n:'Eletivas',c:'var(--ac)'},{k:'u',n:'Urgência',c:'#F2B35E'},{k:'m',n:'Emergência',c:'var(--bad)'}]):'<p class="mut">Registre as cirurgias do dia acima.</p>';
+ $('#rt').innerHTML=R.map(r=>`<tr><td>${r.l}</td><td>${r.el}</td><td>${r.ab}</td><td>${r.el?Math.round(100*r.ab/r.el)+'%':'—'}</td><td>${r.e}</td><td>${r.u}</td><td>${r.m}</td></tr>`).join('');
+ $('#pp').textContent=(per==='w'?'Visão semanal (últimas 8 semanas)':'Visão mensal (últimos 12 meses)')+' · gerado em '+brf(iso(new Date()))+'. Pacientes identificados apenas por iniciais.'}
+$('#p_w').onclick=()=>{per='w';$('#p_w').classList.add('on');$('#p_m').classList.remove('on');rep()};
+$('#p_m').onclick=()=>{per='m';$('#p_m').classList.add('on');$('#p_w').classList.remove('on');rep()};
+$('#pdf').onclick=()=>{rep();window.print()};
+$('#bk').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({J,D})],{type:'application/json'}));a.download='nutri-hub-backup-'+iso(new Date())+'.json';a.click()};
+$('#bkf').onchange=async e=>{try{const o=JSON.parse(await e.target.files[0].text());J=o.J||[];D=o.D||[];sv('nh_j',J);sv('nh_d',D);jt();rep()}catch{alert('Arquivo de backup inválido.')}};
+setCat('adm');jt();rep();gate();
+</script>
+</body>
+</html>
