@@ -54,9 +54,6 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;p
 <div><label>Data do registro</label><input id="rd" type="date"></div>
 <div><label>Tipo de visita</label><select id="tipo"><option value="adm">Admissão</option><option value="rev">Seguimento (revisita)</option></select></div>
 <div><label>Paciente</label><select id="sexo"><option value="M">Masculino</option><option value="F">Feminino</option></select></div>
-<div><label>Iniciais do paciente</label><input id="nome" autocomplete="off" placeholder="A.O.S" maxlength="10"></div>
-<div><label>Data de nascimento</label><input id="nasc" type="date"></div>
-<div><label>Leito</label><input id="leito"></div>
 <div><label>Acompanhante</label><select id="ac"><option value=""></option><option>com</option><option>sem</option></select></div>
 <div><label>Triagem</label><select id="tri"><option>NRS-2002</option><option>MNA</option><option>STRONG Kids (STK)</option></select></div>
 <div><label>Estado nutricional</label><select id="en"><option value=""></option><option>Eutrofia</option><option>Sobrepeso</option><option>Obesidade grau I</option><option>Obesidade grau II</option><option>Obesidade grau III</option><option>Baixo peso</option><option>Risco nutricional</option><option>Desnutrição</option><option>Desnutrição moderada a grave</option><option>Eutrofia (escore Z: maior igual a -2; menor igual a +1)</option></select></div>
@@ -78,7 +75,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;p
 <div><label>Jejum</label><select id="jej"></select></div>
 <div id="jwrap"><label>Em jejum desde</label><input id="jd" type="datetime-local"></div>
 </div>
-<p class="mut">Use apenas iniciais. Iniciais e nascimento ficam só na tela e no texto copiado, o app não os salva. Trocar de categoria mantém os dados e muda só dieta, hidratação padrão e conduta.</p>
+<p class="mut">Nada é salvo aqui. Trocar de categoria mantém os dados e muda só dieta, hidratação padrão e conduta.</p>
 </div>
 <div class="card"><h2>Suplementação oral (opcional, entra na conduta)</h2><div class="g">
 <div><label>Suplemento</label><select id="sup"><option value=""></option><option>Fresubin Jucy Drink</option><option>Fresubin 2 kcal</option><option>Fresubin Protein Energy</option><option>Nutridrink Protein</option><option>Nutridrink Compact Protein</option><option>Módulo de proteína</option><option>Outro</option></select></div>
@@ -193,12 +190,11 @@ const gv=i=>$('#'+i).value.trim(),ph=(i,d)=>gv(i)||'['+d+']';
 const q=(v,w)=>v==='Nega'?'Nega '+w:v?'Refere '+w+': [___]':'[Nega / Refere ___] '+w;
 let cat='adm',pH='',pJ='';
 function setPv(){const n=NV[gv('nv')];if(!n){$('#pv').value='';return}const d=new Date((gv('rd')||iso(new Date()))+'T12:00');d.setDate(d.getDate()+n);$('#pv').value=iso(d)}
-function pend(){const n=($('#out').value.match(/\[/g)||[]).length;const nm=gv('nome').toUpperCase(),bad=nm&&!iniOk(nm);$('#dt').textContent=(bad?'Digite só as iniciais (ex.: A.O.S). ':'')+(n?n+' campo(s) entre [colchetes] para completar ou apagar antes de copiar.':'Texto sem pendências.')}
+function pend(){const n=($('#out').value.match(/\[/g)||[]).length;$('#dt').textContent=(n?n+' campo(s) entre [colchetes] para completar ou apagar antes de copiar.':'Texto sem pendências.')}
 function build(){
- const c=C[cat],f=gv('sexo')==='F',a=f?'a':'o',P=f?'a paciente':'o paciente',nb=gv('nasc'),nm=gv('nome').toUpperCase(),okN=nm&&iniOk(nm)?nm:'[Iniciais]',sn=gv('sup')==='Outro'?(gv('supo')||'[suplemento]'):gv('sup');
- let idd='[__]';if(nb){const n=new Date(nb+'T12:00'),t=new Date();idd=t.getFullYear()-n.getFullYear();if(t<new Date(t.getFullYear(),n.getMonth(),n.getDate()))idd--}
+ const c=C[cat],f=gv('sexo')==='F',a=f?'a':'o',P=f?'a paciente':'o paciente',sn=gv('sup')==='Outro'?(gv('supo')||'[suplemento]'):gv('sup');
  let jl=gv('jej')||JB;const jd=gv('jd');if(c.j&&jd){const[d,h]=jd.split('T');jl+=` (desde às ${h} do dia ${br(d)})`}
- const L=[`Em visita de ${gv('tipo')==='rev'?'seguimento':'admissão'}, identidade confirmada com ${P}: ${okN}, data de nascimento ${nb?brf(nb):'[DD/MM/AAAA]'}, ${idd} anos. Encontrad${a} consciente, colaborativ${a}, em leito ${ph('leito','Nº')}, ${gv('ac')||'[com/sem]'} acompanhante.`,
+ const L=[`Em visita de ${gv('tipo')==='rev'?'seguimento':'admissão'}, paciente encontrad${a} consciente, colaborativ${a}, em leito, ${gv('ac')||'[com/sem]'} acompanhante.`,
  `Avaliação nutricional: Triagem pelo ${gv('tri')}. Estado nutricional${cat==='cri'?' segundo curvas da OMS':''}: ${ph('en','Eutrofia / Sobrepeso / Desnutrição')}. Nível de assistência: ${ph('nv','Primário / Secundário / Terciário')}. Próxima visita: ${gv('pv')?br(gv('pv')):'[DD/MM/AA]'}.`,
  `Dieta prescrita: ${ph('di','___')}.`,
  `Alergias/Intolerâncias: ${alTxt()}. Apetite: ${gv('ap')||'[Preservado / Reduzido]'}. Preferências e bloqueios alimentares registrados.${c.xa?' '+c.xa:''}`,
@@ -229,7 +225,7 @@ $$('#ev input,#ev select').forEach(x=>x.addEventListener('input',build));
 $('#out').addEventListener('input',pend);
 ['rn','dx'].forEach(i=>$('#'+i).addEventListener('input',()=>{calcNv();build()}));
 $('#ev').addEventListener('click',e=>{const p=e.target.dataset.p;if(p)preset(p)});
-$('#novo').onclick=()=>{['nome','nasc','leito','ac','en','nv','pv','rn','sup','supo','sdo','sfr','ap','alo','de','or','ace','ha','evc','jd','hi','jej'].forEach(i=>$('#'+i).value='');$('#rd').value=iso(new Date());pH=pJ='';A.clear();$$('#alc button').forEach(b=>b.classList.remove('on'));S.clear();$$('#sic button').forEach(b=>b.classList.remove('on'));setCat(cat)};
+$('#novo').onclick=()=>{['ac','en','nv','pv','rn','sup','supo','sdo','sfr','ap','alo','de','or','ace','ha','evc','jd','hi','jej'].forEach(i=>$('#'+i).value='');$('#rd').value=iso(new Date());pH=pJ='';A.clear();$$('#alc button').forEach(b=>b.classList.remove('on'));S.clear();$$('#sic button').forEach(b=>b.classList.remove('on'));setCat(cat)};
 $('#cp').onclick=async()=>{await cp($('#out').value);$('#cm').textContent='Copiado.';setTimeout(()=>$('#cm').textContent='',2000)};
 $('#rd').value=iso(new Date());
 // ---- Jejum abreviado ----
